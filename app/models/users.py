@@ -1,34 +1,9 @@
 from app import mongo
+from app.models.super_clase import SuperClass
 
-class users:
-    collection = mongo.db.users
+class User(SuperClass):
+    def __init__(self):
+        super().__init__("pokemons_users")
 
-    @staticmethod
-    def find_all():
-        users = users.collection.find()
-        return list(users)
-    
-    @staticmethod
-    def find_by_id(user_id):
-        users = users.collection.find_one({
-            "_id": user_id
-            })
-        return users
-    
-    @staticmethod
-    def create(data):
-        users = users.collection.insert_one(data)
-        return users.inserted_id
-    
-    @staticmethod
-    def update(user_id, data):
-        users = users.collection.update_one({
-            "_id": user_id
-        }, {
-            "$set": data
-        })
-        return users
-    
-    @staticmethod
-    def delete(user_id):
-        return users.collection.delete_one({"_id": user_id})
+    def find_all(self):
+        raise NotImplementedError ("No es necesario obtener todos los usuarios ")
