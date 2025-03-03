@@ -1,25 +1,41 @@
-#Crea 
-#Elimina
-#Modificar la clase del modelo y evitar que se usen metodos indebidos 
-from flask import Blueprint, request, jsonify
-from app.models.factory import ModelFactory
+from flask import Blueprint, request
+from app.tools.response_manager import ResponseManager
+from app.schemas.pokemon_favorite_schema import PokemonFavoriteSchema
 from bson import ObjectId
+from marshmallow import ValidationError
+from app. models.factory import ModelFactory
+from flask_jwt_extended import jwt_required, get_jwt_identity, create_access_token
 
-bp = Blueprint('pokemon_favorites', __name__, url_prefix='/pokemon_favorites')
-pokemon_favorite_model = ModelFactory.get_model("pokemon_favorite")
+bp = Blueprint("Favorite_pokemon", __name__, url_prefix="/favorite-pokemons")
+RM = ResponseManager()
+FP_MODEL = ModelFactory.get_model("pokemones_favorites")
+FP_SCHEMA = PokemonFavoriteSchema()
 
-@bp.route('/get_all', methods=["GET"])
-def get_all():
-    favorites = pokemon_favorite_model.find_all()
-    return jsonify(favorites, 200)
-
-@bp.route('/create', methods=["POST"])
+#Crea 
+@bp.route('/', methods=["POST"])
+@jwt_required()
 def create():
-    data = request.json
-    favorite_id = pokemon_favorite_model.create(data)
-    return jsonify({"favorite_id": str(favorite_id)}, 200)
+    try: 
+        data = request.json
+        data = FP_SCHEMA.validate(data)
+        fp = FP_MODEL.create(data)
+        return RM.succes({"_id":fp})
+    except ValidationError as err:
+        print(err)
+        return RM.error("Es necesario enviar todos los parametros ")
 
-@bp.route('/delete/<string:favorite_id>', methods=["DELETE"])
-def delete(favorite_id):
-    pokemon_favorite_model.delete(ObjectId(favorite_id))
-    return jsonify("Pokémon favorito eliminado con éxito", 200)
+#Elimina
+
+@bp.route('/<string:id>', methods=["DELETE"])
+@jwt_required()
+def delete(id):
+    FP_MODEL.delete(ObjectId(id))
+    return RM.succes("Pokemon eliminado con exito")
+#Get All
+
+@bp.route('/<string:user_id>', methods=["GET"])
+@jwt_required()
+def get_all():
+    user_id = get_jwt_identity()
+    data = FP_MODEL.find_all(user_id)
+    return RM.succes(data)

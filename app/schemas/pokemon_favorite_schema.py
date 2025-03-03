@@ -8,7 +8,7 @@ class PokemonFavoriteSchema(Schema):
         }
     )
 
-    pokemons = fields.List(
+    pokemons = fields.Str(
         required=True,
         validate=lambda x: len(x) > 0,
         error_messages={

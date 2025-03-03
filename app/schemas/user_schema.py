@@ -19,7 +19,7 @@ class UserSchema(Schema):
         }
     )
 
-    email = fields.Str(
+    email = fields.Email(
         required=True,
         #lambda es una funcion flecha 
         validate=lambda x: "@utma.edu.mx" in x,

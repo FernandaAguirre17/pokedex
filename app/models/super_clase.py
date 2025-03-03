@@ -1,8 +1,8 @@
 from app import mongo
-from app.models.super_clase import SuperClass
+from bson import ObjectId
 
-class pokemon(SuperClass):
-    def _init_(self, collection):
+class SuperClass:
+    def __init__(self, collection):
         self.collection = mongo.db[collection]
 
     #metodo para encontrar todos los pokemons
@@ -18,11 +18,11 @@ class pokemon(SuperClass):
 
     def create(self, data):
         datun = self.collection.insert_one(data)
-        return datun.inserted_id
+        return str (datun.inserted_id)
     
     def update(self, object_id, data):
         datun = self.collection.update_one({
-            "_id":object_id
+            "_id":ObjectId(object_id)
         },{
             "$set":data
         })
