@@ -13,5 +13,15 @@ class PokemonFavorites(SuperClass):
         raise NotImplementedError ("Los pokemones no se pueden encontrar de manera individual")
     
     def find_all(self, user_id):
-        data = self.collection.find({"user_id":ObjectId(user_id)})
+        data = list (self.collection.find({"user_id":ObjectId(user_id)}))
+        for datum in data:
+            datum["user_id"] = str(data["user_id"])
+            datum["pokemon_id"] = str(data["pokemon_id"])
+            datum["_id"] = str(data["_id"])
         return data
+    
+    def create(self, data):
+        data["user_id"] = ObjectId(data["user_id"])
+        data["pokemon_id"] = ObjectId(data["pokemon_id"])
+        datum = self.collection.insert_one(data)
+        return str(datum.inserted_id)

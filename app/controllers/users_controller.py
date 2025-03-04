@@ -13,7 +13,7 @@ user_schema = UserSchema()
 user_model = ModelFactory.get_model("users")
 EM = EncryptionManager()
 
-@bp.route("/login", methods=["Post"])
+@bp.route("/login", methods=["POST"])
 def login():
     data = request.json
     email = data.get("email", None)
@@ -32,15 +32,18 @@ def registrer():
         data = user_schema.load(request.json)
         data["password"] = EM.create_hash(data["password"])
         user_id = user_model.create(data)
-        return RM.error({"user_id":str(user_id)})
+        return RM.succes({"user": user_id, "token":create_access_token(user_id) })
     except ValidationError as err:
         return RM.error ("Los parametros enviados son incorrectos")
 
 
 @bp.route("/update/<string:user_id>", methods = ["PUT"])
+@jwt_required()
 def update(user_id):
+    user_id = user_model.update
     try:
         data = user_schema.load(request.json)
+        user["password"] = EM.create_hash(data["password"])
         user = user_model.update(ObjectId(user_id), data)
         return RM.success({"data": user})
     except ValidationError as err:
@@ -48,12 +51,17 @@ def update(user_id):
 
 
 @bp.route("/delete/<string:user_id>", methods = ["DELETE"])   
+@jwt_required()
 def delete(user_id):
     user_model.delete(ObjectId(user_id))
     return RM.success("Usuario eliminado con exito")
 
 
 @bp.route("/get/<string:user_id>", methods = ["GET"])
-def get_user(user_id):
+@jwt_required()
+def get_user():
+    user_id = get_jwt_identity()
     user = user_model.find_by_id(ObjectId(user_id))
+    if not user:
+        return RM.error("El usuario no existe")
     return RM.success(user)

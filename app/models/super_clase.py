@@ -7,13 +7,17 @@ class SuperClass:
 
     #metodo para encontrar todos los pokemons
     def find_all(self):
-        data = self.collection.find()
-        return list(data)
+        data = list(self.collection.find())
+        for datum in data:
+            datum ["_id"]  = str(datum["_id"])
+        return data
     
     def find_by_id(self, object_id):
         datum = self.collection.find_one({
             "_id": object_id
             })
+        if datum:
+            datum["_id"] = str (datum["_id"])
         return datum
 
     def create(self, data):
@@ -21,12 +25,17 @@ class SuperClass:
         return str (datun.inserted_id)
     
     def update(self, object_id, data):
-        datun = self.collection.update_one({
-            "_id":ObjectId(object_id)
+        self.collection.update_one({
+            "_id":object_id
         },{
             "$set":data
         })
-        return datun  
+        datum = self.collection.find_one({
+            "_id":object_id
+        })
+
+        datum["_id"]= str(datum["_id"])
+        return datum  
     
     def delete(self, object_id):
         return self.collection.delete_one({"_id":object_id})
