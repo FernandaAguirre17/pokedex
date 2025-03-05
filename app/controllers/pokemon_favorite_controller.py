@@ -11,7 +11,7 @@ RM = ResponseManager()
 FP_MODEL = ModelFactory.get_model("pokemones_favorites")
 FP_SCHEMA = PokemonFavoriteSchema()
 
-#Crea 
+#Crea
 @bp.route('/', methods=["POST"])
 @jwt_required()
 def create():
@@ -35,7 +35,7 @@ def delete(id):
     return RM.succes("Pokemon eliminado con exito")
 #Get All
 
-@bp.route('/<string:user_id>', methods=["GET"])
+@bp.route('/', methods=["GET"])
 @jwt_required()
 def get_all():
     user_id = get_jwt_identity()
