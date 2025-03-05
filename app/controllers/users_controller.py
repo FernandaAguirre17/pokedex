@@ -39,7 +39,7 @@ def registrer():
 
 @bp.route("/update", methods = ["PUT"])
 @jwt_required()
-def update(user_id):
+def update():
     user_id = get_jwt_identity()
     try:
         data = user_schema.load(request.json)
@@ -50,7 +50,7 @@ def update(user_id):
         return RM.error ("Los parametros enviados son incorrectos")
 
 
-@bp.route("/delete+", methods = ["DELETE"])   
+@bp.route("/delete", methods = ["DELETE"])   
 @jwt_required()
 def delete():
     user_id = get_jwt_identity()

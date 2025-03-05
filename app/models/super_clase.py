@@ -33,8 +33,8 @@ class SuperClass:
         datum = self.collection.find_one({
             "_id":object_id
         })
-
-        datum["_id"]= str(datum["_id"])
+        if datum:
+            datum["_id"]= str(datum["_id"])
         return datum  
     
     def delete(self, object_id):
