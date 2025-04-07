@@ -1,5 +1,4 @@
 import { StatusBar } from 'expo-status-bar';
-import { Pressable } from 'react-bootstrap';
 import { StyleSheet, Text, View, Image, TextInput, Pressable } from 'react-native';
 
 export default function App() {
